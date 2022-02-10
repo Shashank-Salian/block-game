@@ -1,23 +1,26 @@
 import Eye from "./Eye";
+import Ground from "./Ground";
 
 class Player {
 	/**
 	 *
 	 * @param {CanvasRenderingContext2D} ctx
+	 * @param {Ground} ground
 	 */
-	constructor(ctx) {
+	constructor(ctx, ground) {
 		/**
 		 * @readonly
 		 * @type {"Player"}
 		 */
 		this.type = "Player";
 
+		this.ground = ground;
 		this.ctx = ctx;
 		this.width = 50;
 		this.height = 50;
 		this.position = {
 			x: 100,
-			y: window.innerHeight - this.height,
+			y: ground.position.y - this.height,
 		};
 		this.velocity = {
 			x: 0,
@@ -25,6 +28,8 @@ class Player {
 		};
 		this.gravity = 0.5;
 		this.colliding = false;
+
+		this.gameOver = false;
 	}
 
 	draw() {
@@ -39,25 +44,14 @@ class Player {
 		if (!this.colliding) eye.draw();
 	}
 
-	/**
-	 * @private
-	 * @param {'r' | 'l'} edge
-	 * @returns {boolean}
-	 */
-	reachedBorder(edge) {
-		if (this.position.x <= 0 && edge === "l") return true;
-
-		if (this.position.x + this.width >= window.innerWidth && edge === "r")
-			return true;
-
-		return false;
-	}
-
 	update() {
-		if (this.position.y < window.innerHeight / 2 && this.velocity.y < 0)
+		if (
+			this.position.y < (window.innerHeight * 40) / 100 &&
+			this.velocity.y < 0
+		)
 			this.velocity.y = 30;
 
-		if (this.position.y + this.height < window.innerHeight)
+		if (this.position.y + this.height < this.ground.position.y)
 			this.colliding = false;
 
 		this.position.y += this.velocity.y;
@@ -66,7 +60,7 @@ class Player {
 
 		if (
 			this.position.y + this.height + this.velocity.y <=
-			this.ctx.canvas.height
+			this.ground.position.y
 		)
 			this.velocity.y += this.gravity;
 		else this.velocity.y = 0;

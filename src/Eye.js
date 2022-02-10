@@ -1,4 +1,4 @@
-import Enemy from "./Enemy";
+import Enemy from "./Enemy/Enemy";
 import Player from "./Player";
 
 class Eye {
@@ -14,17 +14,17 @@ class Eye {
 		this.position = {
 			x:
 				container.type === "Enemy"
-					? container.position.x + container.width / 2 - this.radius * 2
+					? container.position.x -
+					  (container.parallelSideB - container.parallelSideT) +
+					  container.width / 2
 					: container.velocity.x >= 0
 					? container.position.x + (container.width * 75) / 100
 					: container.position.x + (container.width * 25) / 100,
 			y:
 				container.type === "Enemy"
-					? container.height + (container.height * 98) / 100
+					? container.position.y + (container.height * 80) / 100
 					: container.position.y + (container.height * 25) / 100,
 		};
-		// this.constructor.counter = 0;
-		// console.log(Eye.counter);
 	}
 	/**
 	 * @private
@@ -43,7 +43,7 @@ class Eye {
 		this.ctx.beginPath();
 		this.container.type === "Enemy"
 			? this.ctx.arc(
-					this.position.x + Math.cos(Eye.counter) * 4.5,
+					this.position.x + Math.sin(Eye.counter) * 4.5,
 					this.position.y + this.radius / 2,
 					this.radius / 2,
 					0,

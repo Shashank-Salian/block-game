@@ -1,12 +1,14 @@
+import Ground from "./Ground";
 import { randomInRange } from "./utils";
 
 class Platform {
 	/**
 	 *
 	 * @param {CanvasRenderingContext2D} ctx
+	 * @param {Ground} ground
 	 * @param {number} x
 	 */
-	constructor(ctx, x = null) {
+	constructor(ctx, ground, x = null) {
 		this.ctx = ctx;
 		this.width = 200;
 		this.height = 75;
@@ -14,6 +16,10 @@ class Platform {
 		 * @private
 		 */
 		this.initialX = x;
+		/**
+		 * @private
+		 */
+		this.ground = ground;
 		const randomX = randomInRange(
 			window.innerWidth / 2,
 			window.innerWidth - this.width,
@@ -21,7 +27,7 @@ class Platform {
 		);
 		this.position = {
 			x: x === null ? randomX - (randomX % 10) : x,
-			y: window.innerHeight - this.height,
+			y: ground.position.y - this.height,
 		};
 	}
 
@@ -33,11 +39,10 @@ class Platform {
 			this.width,
 			this.height
 		);
-		// console.log(this.position.x, this.position.y, this.width, this.height);
 	}
 
 	update() {
-		this.position.y = window.innerHeight - this.height;
+		this.position.y = this.ground.position.y - this.height + 0.5;
 		this.draw();
 	}
 }
