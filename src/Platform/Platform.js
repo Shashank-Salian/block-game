@@ -1,5 +1,5 @@
-import Ground from "./Ground";
-import { randomInRange } from "./utils";
+import Ground from "../Ground";
+import { randomInRange } from "../utils";
 
 class Platform {
 	/**
@@ -10,8 +10,9 @@ class Platform {
 	 */
 	constructor(ctx, ground, x = null) {
 		this.ctx = ctx;
-		this.width = 200;
-		this.height = 75;
+		const randomWidth = randomInRange(80, 600);
+		this.width = randomWidth - (randomWidth % 10);
+		this.height = randomInRange(75, 170);
 		/**
 		 * @private
 		 */
@@ -21,13 +22,18 @@ class Platform {
 		 */
 		this.ground = ground;
 		const randomX = randomInRange(
-			window.innerWidth / 2,
-			window.innerWidth - this.width,
+			window.innerWidth,
+			window.innerWidth * 1.7,
 			true
 		);
 		this.position = {
 			x: x === null ? randomX - (randomX % 10) : x,
 			y: ground.position.y - this.height,
+		};
+
+		this.playerColliding = {
+			x: false,
+			y: false,
 		};
 	}
 

@@ -18,12 +18,12 @@ class Eye {
 					  (container.parallelSideB - container.parallelSideT) +
 					  container.width / 2
 					: container.velocity.x >= 0
-					? container.position.x + (container.width * 75) / 100
-					: container.position.x + (container.width * 25) / 100,
+					? container.position.x + container.width * 0.75
+					: container.position.x + container.width * 0.25,
 			y:
 				container.type === "Enemy"
-					? container.position.y + (container.height * 80) / 100
-					: container.position.y + (container.height * 25) / 100,
+					? container.position.y + container.height * 0.7
+					: container.position.y + container.height * 0.25,
 		};
 	}
 	/**
@@ -32,7 +32,7 @@ class Eye {
 	static counter = 0;
 
 	draw() {
-		Eye.counter += 0.01;
+		Eye.counter += 0.001;
 		this.ctx.fillStyle = "white";
 		this.ctx.beginPath();
 		this.ctx.arc(this.position.x, this.position.y, this.radius, 0, 360);

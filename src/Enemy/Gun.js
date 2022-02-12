@@ -19,16 +19,20 @@ class Bullet {
 		this.length = 8;
 		this.velocity = { x: 5, y: 20 };
 		this.shot = false;
+
+		this.a = this.player.position.x;
+		this.b = this.gun.position.x;
 	}
 
 	shotThePlayer() {
 		if (
 			this.position.x + this.length >= this.player.position.x &&
 			this.position.x <= this.player.position.x + this.player.width &&
-			this.position.y + this.length >= this.player.position.y
+			this.position.y + this.length >= this.player.position.y &&
+			this.position.y <= this.player.position.y + this.player.height
 		) {
-			console.log("Game over man");
-			this.player.gameOver = true;
+			// console.log("Game over man");
+			// this.player.gameOver = true;
 		}
 	}
 
@@ -48,9 +52,7 @@ class Bullet {
 			((this.position.y - this.gun.position.y) * 100) /
 			(this.player.ground.position.y - this.gun.position.y);
 
-		const a = this.player.position.x;
-		const b = this.gun.position.x;
-		this.position.x = ((a - b) * percY) / 100 + b;
+		this.position.x = ((this.a - this.b) * percY) / 100 + this.b;
 		this.draw();
 		this.shotThePlayer();
 	}
@@ -74,22 +76,22 @@ class Gun {
 				this.enemy.width / 2,
 			y: this.enemy.position.y + this.enemy.height - 1,
 		};
-	}
 
-	static id = null;
-	/**
-	 * @type {Bullet[]}
-	 */
-	static bullets = [];
+		this.id = null;
+		/**
+		 * @type {Bullet[]}
+		 */
+		this.bullets = [];
+	}
 
 	shoot() {}
 
 	revoke() {
-		if (Gun.id) {
-			window.clearInterval(Gun.id);
-			Gun.id = null;
+		if (this.id) {
+			window.clearInterval(this.id);
+			this.id = null;
 		}
-		Gun.bullets = [];
+		this.bullets = [];
 	}
 
 	draw() {
@@ -98,26 +100,26 @@ class Gun {
 			this.enemy.position.x -
 				(this.enemy.parallelSideB - this.enemy.parallelSideT) +
 				this.enemy.width / 2,
-			this.enemy.position.y + this.enemy.height - 1
+			this.enemy.position.y + this.enemy.height - 5
 		);
 
+		this.ctx.strokeStyle = "black";
 		this.ctx.lineTo(this.position.x, this.position.y);
 		this.ctx.lineWidth = 10;
 		this.ctx.stroke();
 		this.ctx.closePath();
 
-		Gun.bullets.forEach((bullet) => {
+		this.bullets.forEach((bullet) => {
 			bullet.update();
 		});
 
-		if (!Gun.id) {
-			Gun.id = window.setInterval(() => {
+		if (!this.id) {
+			this.id = window.setInterval(() => {
 				if (this.player.gameOver) {
-					window.clearInterval(Gun.id);
+					window.clearInterval(this.id);
 				}
-				Gun.bullets.push(new Bullet(this.ctx, this, this.player));
-				console.log(Gun.bullets);
-			}, 600);
+				this.bullets.push(new Bullet(this.ctx, this, this.player));
+			}, 300);
 		}
 	}
 
@@ -142,6 +144,10 @@ class Gun {
 			x: gunX,
 			y: this.enemy.position.y + this.enemy.height + 50,
 		};
+
+		if (this.bullets[0] && this.bullets[0].position.y >= window.innerHeight) {
+			this.bullets.shift();
+		}
 
 		this.draw();
 	}

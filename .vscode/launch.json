@@ -10,8 +10,8 @@
 			"webRoot": "${workspaceFolder}",
 			"pathMappings": [
 				{
-					"url": "http://localhost:3000/src/Enemy",
-					"path": "${workspaceFolder}/src/Enemy"
+					"url": "http://localhost:3000/src/Player.js",
+					"path": "${workspaceFolder}/src/Player.js"
 				}
 			]
 		}

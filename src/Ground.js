@@ -6,7 +6,7 @@ class Ground {
 	constructor(ctx) {
 		this.ctx = ctx;
 		this.width = window.innerWidth;
-		this.height = (window.innerHeight * 20) / 100;
+		this.height = window.innerHeight * 0.2;
 		this.position = {
 			x: 0,
 			y: window.innerHeight - this.height,
@@ -25,7 +25,7 @@ class Ground {
 
 	update() {
 		this.width = window.innerWidth;
-		this.height = (window.innerHeight * 20) / 100;
+		this.height = window.innerHeight * 0.2;
 		this.position.y = window.innerHeight - this.height;
 
 		this.draw();

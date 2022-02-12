@@ -28,6 +28,7 @@ class Player {
 		};
 		this.gravity = 0.5;
 		this.colliding = false;
+		this.preventJump = false;
 
 		this.gameOver = false;
 	}
@@ -45,25 +46,27 @@ class Player {
 	}
 
 	update() {
-		if (
-			this.position.y < (window.innerHeight * 40) / 100 &&
-			this.velocity.y < 0
-		)
+		if (this.position.y < window.innerHeight * 0.2 && this.velocity.y < 0) {
 			this.velocity.y = 30;
+			this.preventJump = true;
+		}
 
-		if (this.position.y + this.height < this.ground.position.y)
-			this.colliding = false;
+		if (this.velocity.y === 0) {
+			this.preventJump = false;
+		}
 
 		this.position.y += this.velocity.y;
 		this.position.x += this.velocity.x;
-		this.draw();
 
 		if (
 			this.position.y + this.height + this.velocity.y <=
 			this.ground.position.y
 		)
 			this.velocity.y += this.gravity;
-		else this.velocity.y = 0;
+		else {
+			this.velocity.y = 0;
+		}
+		this.draw();
 	}
 }
 

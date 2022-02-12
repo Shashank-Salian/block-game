@@ -20,7 +20,7 @@ class Torch {
 			y: enemy.position.y + enemy.height,
 		};
 		this.enemy = enemy;
-		this.height = (window.innerHeight * 75) / 100;
+		this.height = window.innerHeight * 0.75;
 		this.width = this.scatterLength * 2 + enemy.width;
 	}
 
@@ -63,7 +63,7 @@ class Torch {
 				this.scatterLength,
 			y: this.enemy.position.y + this.enemy.height,
 		};
-		this.height = (window.innerHeight * 75) / 100;
+		this.height = window.innerHeight * 0.75;
 		this.width = this.scatterLength * 2 + this.enemy.width;
 		this.draw();
 	}

@@ -1,5 +1,6 @@
 import Eye from "../Eye";
 import Player from "../Player";
+import { randomInRange } from "../utils";
 import Gun from "./Gun";
 import Torch from "./Torch";
 
@@ -10,7 +11,7 @@ class Enemy {
 	 * @param {Player} player
 	 * @param {number} x
 	 */
-	constructor(ctx, player, x = 500) {
+	constructor(ctx, player, x) {
 		/**
 		 * @readonly
 		 * @type {"Enemy"}
@@ -18,10 +19,14 @@ class Enemy {
 		this.type = "Enemy";
 		this.ctx = ctx;
 		this.player = player;
-		this.position = {
-			x: x,
-			y: 100,
-		};
+		/**
+		 * @private
+		 */
+		this.distanceTravelled = 0;
+		/**
+		 * @private
+		 */
+		this.prevVelocity = 1;
 
 		this.parallelSideT = 75;
 		this.parallelSideB = 130;
@@ -29,8 +34,23 @@ class Enemy {
 
 		this.width = this.parallelSideB + (this.parallelSideB - this.parallelSideT);
 		this.height = this.diagonalSide;
+		this.position = {
+			x: x || randomInRange(window.innerWidth, window.innerWidth * 1.6),
+			y: randomInRange(
+				window.innerHeight * 0.1 - this.height,
+				window.innerHeight * 0.2 - this.height
+			),
+		};
+		this.velocity = randomInRange(0.5, 2);
+		this.distance = randomInRange(
+			window.innerHeight * 0.5,
+			window.innerHeight * 1.5,
+			true
+		);
 		this.torch = new Torch(this.ctx, this);
 		this.gun = new Gun(ctx, this, player);
+
+		this.playerFound = false;
 	}
 
 	draw() {
@@ -60,6 +80,7 @@ class Enemy {
 
 	shoot() {
 		this.gun.update();
+		this.velocity = 0;
 	}
 
 	findPlayer() {
@@ -68,13 +89,25 @@ class Enemy {
 			this.player.position.x <= this.torch.position.x + this.torch.width &&
 			!this.player.colliding
 		) {
+			this.playerFound = true;
 			this.shoot();
-		} else {
+		} else if (this.playerFound) {
+			this.playerFound = false;
+			this.velocity = this.prevVelocity;
 			this.gun.revoke();
 		}
 	}
 
 	update() {
+		this.position.x += this.velocity;
+		this.distanceTravelled += this.velocity;
+		if (
+			this.distanceTravelled > this.distance ||
+			this.distanceTravelled < -this.distance
+		) {
+			this.velocity = -this.velocity;
+			this.prevVelocity = this.velocity;
+		}
 		this.draw();
 	}
 }
