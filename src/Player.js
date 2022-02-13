@@ -30,6 +30,8 @@ class Player {
 		this.colliding = false;
 		this.preventJump = false;
 
+		this.travelled = 0;
+
 		this.gameOver = false;
 	}
 
@@ -57,6 +59,7 @@ class Player {
 
 		this.position.y += this.velocity.y;
 		this.position.x += this.velocity.x;
+		this.travelled += this.velocity.x;
 
 		if (
 			this.position.y + this.height + this.velocity.y <=

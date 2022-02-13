@@ -41,7 +41,7 @@ class Enemy {
 				window.innerHeight * 0.2 - this.height
 			),
 		};
-		this.velocity = randomInRange(0.5, 2);
+		this.velocity = randomInRange(1, 3);
 		this.distance = randomInRange(
 			window.innerWidth * 0.5,
 			window.innerWidth * 1.5,

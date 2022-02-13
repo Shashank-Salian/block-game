@@ -1,18 +1,20 @@
 import { randomInRange } from "../utils";
+import Platform from "./Platform";
 
 class Cloud {
 	/**
 	 *
 	 * @param {CanvasRenderingContext2D} ctx
+	 * @param {Platform} platform
 	 */
-	constructor(ctx) {
+	constructor(ctx, platform) {
 		this.ctx = ctx;
+		this.platform = platform;
+		this.difference = randomInRange(window.innerWidth * 0.2, window.innerWidth);
 		this.position = {
-			x: randomInRange(window.innerWidth, window.innerWidth * 2),
+			x: platform.position.x + this.difference,
 			y: randomInRange(window.innerHeight * 0.1, window.innerHeight * 0.2),
 		};
-		this.width = randomInRange(10, 30);
-		this.height = randomInRange(30, 60);
 	}
 
 	draw() {
@@ -20,38 +22,41 @@ class Cloud {
 		this.ctx.arc(
 			this.position.x,
 			this.position.y,
-			60,
+			30,
 			Math.PI * 0.5,
 			Math.PI * 1.5
 		);
 		this.ctx.arc(
-			this.position.x + 70,
-			this.position.y - 60,
-			70,
+			this.position.x + 40,
+			this.position.y - 30,
+			40,
 			Math.PI * 1,
-			Math.PI * 1.85
+			Math.PI * 1.8
 		);
 		this.ctx.arc(
-			this.position.x + 152,
-			this.position.y - 45,
-			50,
+			this.position.x + 85,
+			this.position.y - 26,
+			30,
 			Math.PI * 1.37,
 			Math.PI * 1.91
 		);
 		this.ctx.arc(
-			this.position.x + 200,
-			this.position.y,
-			60,
+			this.position.x + 120,
+			this.position.y + 5,
+			40,
 			Math.PI * 1.5,
-			Math.PI * 0.5
+			Math.PI * 0.2
 		);
-		this.ctx.moveTo(this.position.x + 200, this.position.y + 60);
+		this.ctx.moveTo(this.position.x, this.position.y);
 		this.ctx.lineTo(this.position.x, this.position.y + 60);
-		this.ctx.strokeStyle = "#797874";
-		this.ctx.stroke();
-		this.ctx.fillStyle = "#8ED6FF";
+		this.ctx.fillStyle = "#000000bb";
 		this.ctx.fill();
 		this.ctx.closePath();
+	}
+
+	update() {
+		this.position.x = this.platform.position.x + this.difference;
+		this.draw();
 	}
 }
 

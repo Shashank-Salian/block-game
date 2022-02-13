@@ -5,6 +5,7 @@ import Platform from "./src/Platform/Platform";
 import Player from "./src/Player";
 import { randomInRange } from "./src/utils";
 
+import "./assets/ArcadeFont.ttf";
 import "./style.css";
 
 const canvas = document.getElementById("canvas");
@@ -31,6 +32,8 @@ const keys = {
 	},
 };
 
+let distanceTravelled = 0;
+
 const ground = new Ground(ctx);
 const player = new Player(ctx, ground);
 const randomPlatformXs = [
@@ -49,16 +52,44 @@ const enemies = [
 	new Enemy(ctx, player, window.innerWidth * 0.7),
 ];
 
-const cloud = new Cloud(ctx);
+/**
+ * @type {Cloud[]}
+ */
+const clouds = [
+	new Cloud(ctx, platforms[0]),
+	new Cloud(ctx, platforms[1]),
+	new Cloud(ctx, platforms[3]),
+];
 
 const init = () => {
 	player.position.y = ground.position.y - player.height;
 };
 
-const animate = () => {
-	if (!player.gameOver) {
-		requestAnimationFrame(animate);
+const setScore = () => {
+	let strScore = Math.floor(distanceTravelled / 1000).toString();
+	let zeroCount = 5 - strScore.length;
+	let score = "";
+	if (zeroCount > 0) {
+		for (let i = 0; i < zeroCount; i++) {
+			score += "0";
+		}
+	}
+	score += strScore;
+	ctx.fillStyle = "black";
+	ctx.textAlign = "left";
+	ctx.font = "12px Arcade";
+	ctx.fillText(
+		"score",
+		window.innerWidth * 0.94 + 15,
+		window.innerHeight * 0.35 - 25
+	);
+	ctx.font = "18px Arcade";
+	ctx.fillText(score, window.innerWidth * 0.94, window.innerHeight * 0.35);
+};
 
+const animate = () => {
+	requestAnimationFrame(animate);
+	if (!player.gameOver) {
 		/**
 		 * @type {10 | -10 | 0 | null}
 		 */
@@ -68,11 +99,17 @@ const animate = () => {
 		 */
 		let playerCanMoveX = null;
 
-		let playerCollidingOnPlatforms = false;
+		// let playerCollidingOnPlatforms = false;
 
 		ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-		cloud.draw();
+		if (distanceTravelled <= player.travelled) {
+			distanceTravelled = player.travelled;
+		}
+
+		clouds.forEach((cloud) => {
+			cloud.update();
+		});
 
 		enemies.forEach((enemy) => {
 			enemy.update();
@@ -149,7 +186,7 @@ const animate = () => {
 			) {
 				player.velocity.y = 0;
 				platform.playerColliding.y = true;
-				playerCollidingOnPlatforms = true;
+				// playerCollidingOnPlatforms = true;
 			} else if (
 				(player.position.x + player.width === platform.position.x &&
 					player.position.y >= platform.position.y) ||
@@ -194,7 +231,7 @@ const animate = () => {
 					(platforms[j].playerColliding.x && platform.playerColliding.y) ||
 					(platforms[j].playerColliding.y && platform.playerColliding.x)
 				) {
-					playerCollidingOnPlatforms = true;
+					// playerCollidingOnPlatforms = true;
 					player.colliding = true;
 					break;
 				}
@@ -212,6 +249,7 @@ const animate = () => {
 			platforms.forEach((platform) => {
 				platform.position.x += platformCanMoveX;
 			});
+			player.travelled -= platformCanMoveX;
 		}
 
 		if (player.velocity.y !== 0) {
@@ -236,7 +274,28 @@ const animate = () => {
 				platforms.push(new Platform(ctx, ground));
 
 			for (let i = 0; i < 2; i++) enemies.push(new Enemy(ctx, player));
+
+			clouds.push(new Cloud(ctx, platforms[platforms.length - 2]));
+			clouds.push(new Cloud(ctx, platforms[platforms.length - 1]));
 		}
+		if (clouds.length > 0 && clouds[0].position.x < -window.innerWidth * 1.5) {
+			clouds.shift();
+		}
+		setScore();
+	} else {
+		ctx.font = "50px Arcade";
+		ctx.textAlign = "center";
+		ctx.fillText(
+			"Game Over!",
+			window.innerWidth * 0.5,
+			window.innerHeight * 0.35
+		);
+		ctx.font = "25px Arcade";
+		ctx.fillText(
+			"Click to restart",
+			window.innerWidth * 0.5,
+			window.innerHeight * 0.4
+		);
 	}
 };
 
@@ -269,5 +328,11 @@ window.addEventListener("keyup", ({ key }) => {
 		case "d":
 			keys.right.pressed = false;
 			break;
+	}
+});
+
+canvas.addEventListener("click", () => {
+	if (player.gameOver) {
+		location.reload();
 	}
 });

@@ -31,8 +31,7 @@ class Bullet {
 			this.position.y + this.length >= this.player.position.y &&
 			this.position.y <= this.player.position.y + this.player.height
 		) {
-			// console.log("Game over man");
-			// this.player.gameOver = true;
+			this.player.gameOver = true;
 		}
 	}
 
