@@ -12,20 +12,4 @@ const randomInRange = (min = 0, max = 1, int = false) => {
 	return Math.random() * (max - min) + min;
 };
 
-class Queue {
-	/**
-	 *
-	 * @param {any[]} data
-	 */
-	constructor(data = []) {
-		this.data = data;
-		this.front = this.rear = -1;
-	}
-
-	push(ele) {
-		if (this.front === (this.rear + 1) / this.max) {
-		}
-	}
-}
-
 export { randomInRange };

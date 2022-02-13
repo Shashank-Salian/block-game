@@ -35,7 +35,7 @@ class Enemy {
 		this.width = this.parallelSideB + (this.parallelSideB - this.parallelSideT);
 		this.height = this.diagonalSide;
 		this.position = {
-			x: x || randomInRange(window.innerWidth, window.innerWidth * 1.6),
+			x: x || randomInRange(window.innerWidth, window.innerWidth * 2),
 			y: randomInRange(
 				window.innerHeight * 0.1 - this.height,
 				window.innerHeight * 0.2 - this.height
@@ -43,8 +43,8 @@ class Enemy {
 		};
 		this.velocity = randomInRange(0.5, 2);
 		this.distance = randomInRange(
-			window.innerHeight * 0.5,
-			window.innerHeight * 1.5,
+			window.innerWidth * 0.5,
+			window.innerWidth * 1.5,
 			true
 		);
 		this.torch = new Torch(this.ctx, this);

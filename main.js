@@ -78,9 +78,13 @@ const animate = () => {
 			enemy.update();
 		});
 
-		console.log(platforms.length);
 		platforms.forEach((platform, i) => {
 			platform.update();
+
+			platform.playerColliding = {
+				x: false,
+				y: false,
+			};
 
 			if (
 				keys.right.pressed &&
@@ -145,6 +149,7 @@ const animate = () => {
 			) {
 				player.velocity.y = 0;
 				platform.playerColliding.y = true;
+				playerCollidingOnPlatforms = true;
 			} else if (
 				(player.position.x + player.width === platform.position.x &&
 					player.position.y >= platform.position.y) ||
@@ -152,6 +157,7 @@ const animate = () => {
 					player.position.y >= platform.position.y)
 			) {
 				player.colliding = true;
+				platform.playerColliding.x = true;
 			}
 
 			// Platform collision detection X axis on left side
@@ -179,12 +185,6 @@ const animate = () => {
 				platform.playerColliding.x = true;
 			}
 
-			if (
-				!playerCollidingOnPlatforms &&
-				player.position.y + player.height < ground.position.y
-			) {
-				player.colliding = false;
-			}
 			let numberOfPlatforms = platforms.length;
 			for (let j = i - 3; j < i + 3; j++) {
 				if (i === j || j < 0 || j > numberOfPlatforms - 1) {
