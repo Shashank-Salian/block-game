@@ -10,7 +10,8 @@ class Eye {
 	constructor(ctx, container) {
 		this.ctx = ctx;
 		this.container = container;
-		this.radius = container.type === "Enemy" ? 10 : 5;
+		this.radius =
+			container.type === "Enemy" ? (window.innerWidth > 1020 ? 10 : 5) : 5;
 		this.position = {
 			x:
 				container.type === "Enemy"

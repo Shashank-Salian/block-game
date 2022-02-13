@@ -28,9 +28,9 @@ class Enemy {
 		 */
 		this.prevVelocity = 1;
 
-		this.parallelSideT = 75;
-		this.parallelSideB = 130;
-		this.diagonalSide = 75;
+		this.parallelSideT = window.innerWidth * 0.04;
+		this.parallelSideB = window.innerWidth * 0.06;
+		this.diagonalSide = window.innerWidth * 0.035;
 
 		this.width = this.parallelSideB + (this.parallelSideB - this.parallelSideT);
 		this.height = this.diagonalSide;

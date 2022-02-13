@@ -104,7 +104,7 @@ class Gun {
 
 		this.ctx.strokeStyle = "black";
 		this.ctx.lineTo(this.position.x, this.position.y);
-		this.ctx.lineWidth = 10;
+		this.ctx.lineWidth = window.innerWidth > 1020 ? 10 : 6;
 		this.ctx.stroke();
 		this.ctx.closePath();
 

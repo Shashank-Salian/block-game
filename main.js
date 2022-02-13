@@ -3,12 +3,29 @@ import Ground from "./src/Ground";
 import Cloud from "./src/Platform/Cloud";
 import Platform from "./src/Platform/Platform";
 import Player from "./src/Player";
-import { randomInRange } from "./src/utils";
+import { randomInRange, isTouchDevice } from "./src/utils";
 
 import "./assets/ArcadeFont.ttf";
 import "./style.css";
 
 const canvas = document.getElementById("canvas");
+
+/**
+ * @type {HTMLDivElement}
+ */
+const controls = document.querySelector(".btnContainer");
+/**
+ * @type {HTMLButtonElement}
+ */
+const leftBtn = document.querySelector(".leftBtn");
+/**
+ * @type {HTMLButtonElement}
+ */
+const rightBtn = document.querySelector(".rightBtn");
+/**
+ * @type {HTMLButtonElement}
+ */
+const upBtn = document.querySelector(".upBtn");
 
 /**@type {CanvasRenderingContext2D} */
 const ctx = canvas.getContext("2d");
@@ -34,40 +51,77 @@ const keys = {
 
 let distanceTravelled = 0;
 
-const ground = new Ground(ctx);
-const player = new Player(ctx, ground);
-const randomPlatformXs = [
+/**
+ * @type {Ground[]}
+ */
+let ground = new Ground(ctx);
+
+/**
+ * @type {Player[]}
+ */
+let player = new Player(ctx, ground);
+
+let randomPlatformXs = [
 	randomInRange(window.innerWidth * 0.5 - 40, window.innerWidth),
 	randomInRange(window.innerWidth * 0.5 - 40, window.innerWidth),
 	randomInRange(window.innerWidth * 0.5 - 40, window.innerWidth),
 ];
-const platforms = [
-	new Platform(ctx, ground, randomPlatformXs[0] - (randomPlatformXs[0] % 10)),
-	new Platform(ctx, ground, randomPlatformXs[1] - (randomPlatformXs[1] % 10)),
-	new Platform(ctx, ground, randomPlatformXs[2] - (randomPlatformXs[2] % 10)),
-	new Platform(ctx, ground, randomPlatformXs[2] - (randomPlatformXs[2] % 10)),
-];
-const enemies = [
-	new Enemy(ctx, player, window.innerWidth * 0.45),
-	new Enemy(ctx, player, window.innerWidth * 0.7),
-];
+
+/**
+ * @type {Platform[]}
+ */
+let platforms = [];
+/**
+ * @type {Enemy[]}
+ */
+let enemies = [];
 
 /**
  * @type {Cloud[]}
  */
-const clouds = [
-	new Cloud(ctx, platforms[0]),
-	new Cloud(ctx, platforms[1]),
-	new Cloud(ctx, platforms[3]),
-];
+let clouds;
 
 const init = () => {
 	player.position.y = ground.position.y - player.height;
+	if (!isTouchDevice()) {
+		controls.classList.add("hide");
+	}
+};
+
+const resetValues = () => {
+	distanceTravelled = 0;
+
+	ground = new Ground(ctx);
+	player = new Player(ctx, ground);
+	randomPlatformXs = [
+		randomInRange(window.innerWidth * 0.5 - 40, window.innerWidth),
+		randomInRange(window.innerWidth * 0.5 - 40, window.innerWidth),
+		randomInRange(window.innerWidth * 0.5 - 40, window.innerWidth),
+	];
+	platforms = [
+		new Platform(ctx, ground, randomPlatformXs[0] - (randomPlatformXs[0] % 10)),
+		new Platform(ctx, ground, randomPlatformXs[1] - (randomPlatformXs[1] % 10)),
+		new Platform(ctx, ground, randomPlatformXs[2] - (randomPlatformXs[2] % 10)),
+		new Platform(ctx, ground, randomPlatformXs[2] - (randomPlatformXs[2] % 10)),
+	];
+	enemies = [
+		new Enemy(ctx, player, window.innerWidth * 0.6),
+		new Enemy(ctx, player, window.innerWidth),
+	];
+
+	/**
+	 * @type {Cloud[]}
+	 */
+	clouds = [
+		new Cloud(ctx, platforms[0]),
+		new Cloud(ctx, platforms[1]),
+		new Cloud(ctx, platforms[3]),
+	];
 };
 
 const setScore = () => {
 	let strScore = Math.floor(distanceTravelled / 1000).toString();
-	let zeroCount = 5 - strScore.length;
+	let zeroCount = 4 - strScore.length;
 	let score = "";
 	if (zeroCount > 0) {
 		for (let i = 0; i < zeroCount; i++) {
@@ -78,17 +132,34 @@ const setScore = () => {
 	ctx.fillStyle = "black";
 	ctx.textAlign = "left";
 	ctx.font = "12px Arcade";
-	ctx.fillText(
-		"score",
-		window.innerWidth * 0.94 + 15,
-		window.innerHeight * 0.35 - 25
-	);
+	ctx.fillText("score", window.innerWidth * 0.88, window.innerHeight * 0.25);
 	ctx.font = "18px Arcade";
-	ctx.fillText(score, window.innerWidth * 0.94, window.innerHeight * 0.35);
+	ctx.fillText(
+		score,
+		window.innerWidth * 0.88 - 10,
+		window.innerHeight * 0.25 + 25
+	);
 };
 
 const animate = () => {
 	requestAnimationFrame(animate);
+	if (window.innerHeight > window.innerWidth) {
+		ctx.font = "18px Arcade";
+		ctx.fillStyle = "black";
+		ctx.textAlign = "center";
+		ctx.fillText(
+			"Rotate your device",
+			window.innerWidth * 0.5,
+			window.innerHeight * 0.35
+		);
+		ctx.fillText(
+			"to landscape",
+			window.innerWidth * 0.5,
+			window.innerHeight * 0.4
+		);
+		return;
+	}
+
 	if (!player.gameOver) {
 		/**
 		 * @type {10 | -10 | 0 | null}
@@ -98,8 +169,6 @@ const animate = () => {
 		 * @type {10 | -10 | 0 | null}
 		 */
 		let playerCanMoveX = null;
-
-		// let playerCollidingOnPlatforms = false;
 
 		ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
@@ -127,21 +196,18 @@ const animate = () => {
 				keys.right.pressed &&
 				player.position.x < (window.innerWidth * 50) / 100 // When it reaches 35% of screen stop player and move the background
 			) {
-				// player.velocity.x = 10;
 				if (playerCanMoveX !== 0) {
 					playerCanMoveX = 10;
 					player.colliding = false;
 					platform.playerColliding.x = false;
 				}
 			} else if (keys.left.pressed && player.position.x > 100) {
-				// player.velocity.x = -10;
 				if (playerCanMoveX !== 0) {
 					player.colliding = false;
 					platform.playerColliding.x = false;
 					playerCanMoveX = -10;
 				}
 			} else {
-				// player.velocity.x = 0;
 				playerCanMoveX = 0;
 
 				if (keys.right.pressed) {
@@ -151,7 +217,6 @@ const animate = () => {
 							player.position.y + player.height >= platform.position.y
 						)
 					) {
-						// platform.position.x -= 10;
 						if (platformCanMoveX !== 0) platformCanMoveX = -10;
 					} else {
 						platformCanMoveX = 0;
@@ -166,7 +231,6 @@ const animate = () => {
 							player.position.y + player.height >= platform.position.y
 						)
 					) {
-						// platform.position.x += 10;
 						if (platformCanMoveX !== 0) platformCanMoveX = 10;
 					} else {
 						platformCanMoveX = 0;
@@ -186,7 +250,6 @@ const animate = () => {
 			) {
 				player.velocity.y = 0;
 				platform.playerColliding.y = true;
-				// playerCollidingOnPlatforms = true;
 			} else if (
 				(player.position.x + player.width === platform.position.x &&
 					player.position.y >= platform.position.y) ||
@@ -203,7 +266,6 @@ const animate = () => {
 				keys.right.pressed &&
 				player.position.y + player.height >= platform.position.y
 			) {
-				// player.velocity.x = 0;
 				playerCanMoveX = 0;
 				player.colliding = true;
 				platform.playerColliding.x = true;
@@ -216,7 +278,6 @@ const animate = () => {
 				player.position.y + player.height >= platform.position.y &&
 				keys.left.pressed
 			) {
-				// player.velocity.x = 0;
 				playerCanMoveX = 0;
 				player.colliding = true;
 				platform.playerColliding.x = true;
@@ -231,7 +292,6 @@ const animate = () => {
 					(platforms[j].playerColliding.x && platform.playerColliding.y) ||
 					(platforms[j].playerColliding.y && platform.playerColliding.x)
 				) {
-					// playerCollidingOnPlatforms = true;
 					player.colliding = true;
 					break;
 				}
@@ -284,6 +344,7 @@ const animate = () => {
 		setScore();
 	} else {
 		ctx.font = "50px Arcade";
+		ctx.fillStyle = "black";
 		ctx.textAlign = "center";
 		ctx.fillText(
 			"Game Over!",
@@ -294,13 +355,21 @@ const animate = () => {
 		ctx.fillText(
 			"Click to restart",
 			window.innerWidth * 0.5,
-			window.innerHeight * 0.4
+			window.innerHeight * 0.45
+		);
+	}
+
+	if (!document.fullscreenElement) {
+		ctx.font = "12px Arcade";
+		ctx.textAlign = "center";
+		ctx.fillStyle = "white";
+		ctx.fillText(
+			"Double click to enter fullscreen",
+			window.innerWidth * 0.5,
+			window.innerHeight * 0.9
 		);
 	}
 };
-
-init();
-animate();
 
 window.addEventListener("keydown", ({ key }) => {
 	key = key.toLowerCase();
@@ -313,8 +382,6 @@ window.addEventListener("keydown", ({ key }) => {
 			break;
 		case "w":
 			if (!player.preventJump) player.velocity.y = -15;
-			break;
-		case "s":
 			break;
 	}
 });
@@ -333,6 +400,34 @@ window.addEventListener("keyup", ({ key }) => {
 
 canvas.addEventListener("click", () => {
 	if (player.gameOver) {
-		location.reload();
+		resetValues();
 	}
 });
+
+canvas.addEventListener("dblclick", () => {
+	document.body.requestFullscreen();
+});
+
+leftBtn.addEventListener("touchstart", () => {
+	keys.left.pressed = true;
+});
+
+rightBtn.addEventListener("touchstart", () => {
+	keys.right.pressed = true;
+});
+
+upBtn.addEventListener("touchstart", () => {
+	if (!player.preventJump) player.velocity.y = -15;
+});
+
+leftBtn.addEventListener("touchend", () => {
+	keys.left.pressed = false;
+});
+
+rightBtn.addEventListener("touchend", () => {
+	keys.right.pressed = false;
+});
+
+resetValues();
+init();
+animate();

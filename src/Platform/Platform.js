@@ -12,7 +12,10 @@ class Platform {
 		this.ctx = ctx;
 		const randomWidth = randomInRange(80, 600);
 		this.width = randomWidth - (randomWidth % 10);
-		this.height = randomInRange(75, 170);
+		this.height = randomInRange(
+			window.innerHeight * 0.07,
+			window.innerHeight * 0.16
+		);
 		/**
 		 * @private
 		 */

@@ -12,4 +12,12 @@ const randomInRange = (min = 0, max = 1, int = false) => {
 	return Math.random() * (max - min) + min;
 };
 
-export { randomInRange };
+const isTouchDevice = () => {
+	return (
+		"ontouchstart" in window ||
+		navigator.maxTouchPoints > 0 ||
+		navigator.msMaxTouchPoints > 0
+	);
+};
+
+export { randomInRange, isTouchDevice };

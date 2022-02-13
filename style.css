@@ -4,8 +4,27 @@
 	box-sizing: border-box;
 }
 
+body::backdrop {
+	background-color: rgba(0, 0, 0, 0.25);
+}
+
+body:fullscreen {
+	background-color: rgba(0, 0, 0, 0.25);
+}
+
 #canvas {
 	display: block;
+	position: fixed;
+	left: 0;
+	top: 0;
+	background-color: rgba(0, 0, 0, 0.25);
+}
+
+#canvas::backdrop {
+	background-color: rgba(0, 0, 0, 0.25);
+}
+
+#canvas:fullscreen {
 	background-color: rgba(0, 0, 0, 0.25);
 }
 
@@ -14,6 +33,34 @@
 	position: absolute;
 	z-index: -100;
 	font-family: 'Arcade';
+}
+
+.btnContainer {
+	display: flex;
+	width: 100%;
+	position: absolute;
+	bottom: 5%;
+	justify-content: space-between;
+}
+
+.btn {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	font-size: 22px;
+	font-family: 'Arcade';
+	font-weight: 900;
+	padding: 0;
+	border: 1px solid rgb(32, 32, 32);
+	margin: 15px;
+}
+
+.upBtn {
+	margin-right: 50px;
+}
+
+.hide {
+	visibility: hidden;
 }
 
 @font-face {
