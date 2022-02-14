@@ -1,6 +1,6 @@
 import Eye from "../Eye";
 import Player from "../Player";
-import { randomInRange } from "../utils";
+import { randomInRange, valuesAccordingScreen } from "../utils";
 import Gun from "./Gun";
 import Torch from "./Torch";
 
@@ -43,8 +43,8 @@ class Enemy {
 		};
 		this.velocity = randomInRange(1, 3);
 		this.distance = randomInRange(
-			window.innerWidth * 0.5,
-			window.innerWidth * 1.5,
+			window.innerWidth * 1,
+			window.innerWidth * valuesAccordingScreen(2, 3.5),
 			true
 		);
 		this.torch = new Torch(this.ctx, this);

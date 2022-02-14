@@ -1,5 +1,6 @@
 import Eye from "./Eye";
 import Ground from "./Ground";
+import { valuesAccordingScreen } from "./utils";
 
 class Player {
 	/**
@@ -16,8 +17,8 @@ class Player {
 
 		this.ground = ground;
 		this.ctx = ctx;
-		this.width = 50;
-		this.height = 50;
+		this.width = valuesAccordingScreen(50, 35);
+		this.height = valuesAccordingScreen(50, 35);
 		this.position = {
 			x: 100,
 			y: ground.position.y - this.height,

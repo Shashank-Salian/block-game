@@ -3,7 +3,11 @@ import Ground from "./src/Ground";
 import Cloud from "./src/Platform/Cloud";
 import Platform from "./src/Platform/Platform";
 import Player from "./src/Player";
-import { randomInRange, isTouchDevice } from "./src/utils";
+import {
+	randomInRange,
+	isTouchDevice,
+	valuesAccordingScreen,
+} from "./src/utils";
 
 import "./assets/ArcadeFont.ttf";
 import "./style.css";
@@ -144,6 +148,7 @@ const setScore = () => {
 const animate = () => {
 	requestAnimationFrame(animate);
 	if (window.innerHeight > window.innerWidth) {
+		ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 		ctx.font = "18px Arcade";
 		ctx.fillStyle = "black";
 		ctx.textAlign = "center";
@@ -162,11 +167,11 @@ const animate = () => {
 
 	if (!player.gameOver) {
 		/**
-		 * @type {10 | -10 | 0 | null}
+		 * @type {10 | 5 | -10 | -5 | 0 | null}
 		 */
 		let platformCanMoveX = null;
 		/**
-		 * @type {10 | -10 | 0 | null}
+		 * @type {10 | 5 | -10 | -5 | 0 | null}
 		 */
 		let playerCanMoveX = null;
 
@@ -197,7 +202,7 @@ const animate = () => {
 				player.position.x < (window.innerWidth * 50) / 100 // When it reaches 35% of screen stop player and move the background
 			) {
 				if (playerCanMoveX !== 0) {
-					playerCanMoveX = 10;
+					playerCanMoveX = valuesAccordingScreen(10, 5);
 					player.colliding = false;
 					platform.playerColliding.x = false;
 				}
@@ -205,7 +210,8 @@ const animate = () => {
 				if (playerCanMoveX !== 0) {
 					player.colliding = false;
 					platform.playerColliding.x = false;
-					playerCanMoveX = -10;
+
+					playerCanMoveX = valuesAccordingScreen(-10, -5);
 				}
 			} else {
 				playerCanMoveX = 0;
@@ -217,7 +223,8 @@ const animate = () => {
 							player.position.y + player.height >= platform.position.y
 						)
 					) {
-						if (platformCanMoveX !== 0) platformCanMoveX = -10;
+						if (platformCanMoveX !== 0)
+							platformCanMoveX = valuesAccordingScreen(-10, -5);
 					} else {
 						platformCanMoveX = 0;
 						player.colliding = true;
@@ -231,7 +238,8 @@ const animate = () => {
 							player.position.y + player.height >= platform.position.y
 						)
 					) {
-						if (platformCanMoveX !== 0) platformCanMoveX = 10;
+						if (platformCanMoveX !== 0)
+							platformCanMoveX = valuesAccordingScreen(10, 5);
 					} else {
 						platformCanMoveX = 0;
 						player.colliding = true;
@@ -396,6 +404,10 @@ window.addEventListener("keyup", ({ key }) => {
 			keys.right.pressed = false;
 			break;
 	}
+});
+
+window.addEventListener("orientationchange", () => {
+	resetValues();
 });
 
 canvas.addEventListener("click", () => {

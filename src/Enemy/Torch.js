@@ -11,7 +11,7 @@ class Torch {
 		 * @readonly
 		 */
 		this.ctx = ctx;
-		this.scatterLength = 200;
+		this.scatterLength = window.innerWidth * 0.18;
 		this.position = {
 			x:
 				enemy.position.x -

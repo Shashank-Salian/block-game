@@ -20,4 +20,8 @@ const isTouchDevice = () => {
 	);
 };
 
-export { randomInRange, isTouchDevice };
+const valuesAccordingScreen = (largeScreen, smallScreen) => {
+	return window.innerWidth > 1020 ? largeScreen : smallScreen;
+};
+
+export { randomInRange, isTouchDevice, valuesAccordingScreen };
